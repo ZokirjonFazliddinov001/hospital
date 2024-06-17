@@ -1,0 +1,199 @@
+<!--    <!DOCTYPE html>-->
+<!--    <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">-->
+<!--    <head>-->
+<!--        <meta charset="UTF-8">-->
+<!--        <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--        <title>Admin Page</title>-->
+<!--        <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">-->
+<!--        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">-->
+<!--    </head>-->
+<!--    <style>-->
+<!--        .navbar-shadow{-->
+<!--            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;-->
+<!--        }-->
+<!--    </style>-->
+<!--    <body>-->
+<!--    <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-brand navbar-shadow w-100 py-3">-->
+<!--        <div class="container-fluid">-->
+<!--            <a class="navbar-brand font-weight-bold" href="#">Hospital</a>-->
+<!--            <div class="collapse navbar-collapse text-right" id="navbarNav">-->
+<!--                <ul class="navbar-nav">-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link active" aria-current="page" href="#">Home</a>-->
+<!--                    </li>-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link" href="#">About</a>-->
+<!--                    </li>-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link" href="order/">Orders</a>-->
+<!--                    </li>-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link" href="#">Contact</a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </nav>-->
+<!--    <div class="row mt-4">-->
+<!--        <div class="col-3 border-right" style="height: 100vh">-->
+<!--            <ul class="list-group ">-->
+<!--                <li class="list-group-item">-->
+<!--                    <form class="form-inline" th:action="@{/api/patient/search}" method="get">-->
+<!--                        <input class="form-control mr-sm-2 bg-white text-bg-danger" type="search" placeholder="Search by Phone" aria-label="Search" name="phone">-->
+<!--                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
+<!--                    </form>-->
+<!--                </li>-->
+<!--                <li th:each="patient : ${patients}" class="list-group-item">-->
+<!--                    <a th:href="@{/api/admin/info/{id}(id=${patient.id})}" th:text="${patient.user.fullName}"></a>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </div>-->
+<!--        <div class="col-9 ">-->
+<!--            <div th:if="${currentPatient != null}">-->
+<!--                <h1 th:text="${currentPatient.user.fullName}"></h1>-->
+<!--                <form th:action="@{/api/admin/createAdmission}" method="post">-->
+<!--                    <input type="hidden" th:name="patientId" th:value="${currentPatient.id}">-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="selectBox">Doctor</label>-->
+<!--                        <select id="selectBox" name="selectedOption" class="form-control">-->
+<!--                            <option th:each="doctor : ${doctors}" th:value="${doctor.id}" th:text="${doctor.user.fullName}"></option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                    <div class="details">-->
+<!--                        <div class="mb-3">-->
+<!--                            <label>Date Time</label>-->
+<!--                            <input type="datetime-local" class="form-control" name="dateTime" >-->
+<!--                        </div>-->
+<!--                        <div class="mb-3">-->
+<!--                            <label>Description</label>-->
+<!--                            <label>-->
+<!--                                <textarea class="form-control" name="description"></textarea>-->
+<!--                            </label>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <button type="submit" class="btn btn-primary">Subscribe</button>-->
+<!--                </form>-->
+
+<!--                <ul class="list-group" th:if="${!admissions.isEmpty()}">-->
+<!--                    <li class="list-group-item" th:each="admission : ${admissions}">-->
+<!--                        <span th:text="${admission.localDateTime}"></span>-->
+<!--                        <button type="button" class="btn btn-success btn-sm offset-8 " th:text="${admission.doctor.user.fullName}"></button>-->
+<!--                        <button type="button" class="btn btn-success btn-sm" th:text="${admission.doctor.expertise.expertiseName}"></button>-->
+<!--                        <hr>-->
+<!--                        <div th:if="${admission.isTime(admission.localDateTime)}">-->
+<!--                            <form th:action="@{/api/admin/update/{id}(id=${admission.id})}" method="post">-->
+<!--                                <input type="hidden" th:value="${admission.id}" name="id">-->
+<!--                                <button type="submit" class="btn btn-info btn-sm" th:text="${admission.status.name()}"></button>-->
+<!--                            </form>-->
+<!--                        </div>-->
+<!--                        <div th:unless="${admission.isTime(admission.localDateTime)}">-->
+<!--                            <button type="button" class="btn btn-info btn-sm" th:text="${admission.status.name()}"></button>-->
+<!--                            <button type="button" class="btn btn-info btn-sm offset-10" >INFO </button>-->
+<!--                        </div>-->
+<!--                    </li>-->
+<!--                </ul>-->
+
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    </body>-->
+<!--    </html>-->
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<style>
+    .navbar-shadow {
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    }
+</style>
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary navbar-brand navbar-shadow w-100 py-3">
+    <div class="container-fluid">
+        <a class="navbar-brand font-weight-bold" href="#">Hospital</a>
+        <div class="collapse navbar-collapse text-right" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="order/">Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="row mt-4">
+    <div class="col-3 border-right" style="height: 100vh">
+        <ul class="list-group ">
+            <li class="list-group-item">
+                <form class="form-inline" th:action="@{/api/patient/search}" method="get">
+                    <input class="form-control mr-sm-2 bg-white text-bg-danger" type="search" placeholder="Search by Phone" aria-label="Search" name="phone">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </li>
+            <li th:each="patient : ${patients}" class="list-group-item">
+                <a th:href="@{/api/admin/info/{id}(id=${patient.id})}" th:text="${patient.user.fullName}"></a>
+            </li>
+        </ul>
+    </div>
+    <div class="col-9">
+        <div th:if="${currentPatient != null}">
+            <h1 th:text="${currentPatient.user.fullName}"></h1>
+            <form th:action="@{/api/admin/createAdmission}" method="post">
+                <input type="hidden" th:name="patientId" th:value="${currentPatient.id}">
+                <div class="mb-3">
+                    <label for="selectBox">Doctor</label>
+                    <select id="selectBox" name="selectedOption" class="form-control">
+                        <option th:each="doctor : ${doctors}" th:value="${doctor.id}" th:text="${doctor.user.fullName}"></option>
+                    </select>
+                </div>
+                <div class="details">
+                    <div class="mb-3">
+                        <label>Date Time</label>
+                        <input type="datetime-local" class="form-control" name="dateTime">
+                    </div>
+                    <div class="mb-3">
+                        <label>Description</label>
+                        <textarea class="form-control" name="description"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Subscribe</button>
+            </form>
+
+            <ul class="list-group mt-4" th:if="${!admissions.isEmpty()}">
+                <li class="list-group-item" th:each="admission : ${admissions}">
+                    <span th:text="${admission.localDateTime != null} ? ${#temporals.format(admission.localDateTime, 'yyyy-MM-dd HH:mm')} : 'N/A'"></span>
+                    <button type="button" class="btn btn-success btn-sm offset-8" th:text="${admission.doctor.user.fullName}"></button>
+                    <button type="button" class="btn btn-success btn-sm" th:text="${admission.doctor.expertise.expertiseName}"></button>
+                    <hr>
+                    <div th:if="${admission.isTime(admission.localDateTime)}">
+                        <form th:action="@{/api/admin/update/{id}(id=${admission.id})}" method="post">
+                            <input type="hidden" th:value="${admission.id}" name="id">
+                            <button type="submit" class="btn btn-info btn-sm" th:text="${admission.status.name()}"></button>
+                        </form>
+                    </div>
+                    <div th:unless="${admission.isTime(admission.localDateTime)}">
+                        <button type="button" class="btn btn-info btn-sm" th:text="${admission.status.name()}"></button>
+                        <button type="button" class="btn btn-info btn-sm offset-10">INFO</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>
